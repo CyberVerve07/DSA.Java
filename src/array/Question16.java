@@ -1,7 +1,10 @@
-import java.util.*;
 package array;
- class Main {
+
+import java.util.*;
+
+class Main {
     public static void main(String[] args) {
+
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         long sum = 0;
@@ -11,5 +14,6 @@ package array;
         }
 
         System.out.println(sum);
+        sc.close();
     }
 }
