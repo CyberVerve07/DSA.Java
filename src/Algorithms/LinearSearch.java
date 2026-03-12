@@ -3,7 +3,7 @@
  * Har element  se check karta hai.
  * Time Complexity: O(n)
  */
-package algorithm;
+
 public class LinearSearch {
 
     // Yeh method array mein target element ko dhundhne ke liye hai
