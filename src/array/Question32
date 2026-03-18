@@ -1,0 +1,250 @@
+import java.util.*;
+
+public class MediumProblems {
+    
+    // ============================================
+    // Problem 1: Two Sum II (Sorted Array)
+    // ============================================
+    /**
+     * Given a 1-indexed array of integers in non-decreasing order.
+     * Find two numbers such that they add up to target.
+     * Return indices [index1, index2]
+     * 
+     * Time: O(n), Space: O(1)
+     */
+    public static int[] twoSum(int[] numbers, int target) {
+        int left = 0;
+        int right = numbers.length - 1;
+        
+        while (left < right) {
+            int sum = numbers[left] + numbers[right];
+            
+            if (sum == target) {
+                return new int[]{left + 1, right + 1}; // 1-indexed
+            } else if (sum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        
+        return new int[]{-1, -1};
+    }
+    
+    
+    // ============================================
+    // Problem 2: Container With Most Water
+    // ============================================
+    /**
+     * Given array height, find two lines that together with the x-axis form a container
+     * that would hold the most water.
+     * 
+     * Time: O(n), Space: O(1)
+     */
+    public static int maxArea(int[] height) {
+        int maxWater = 0;
+        int left = 0;
+        int right = height.length - 1;
+        
+        while (left < right) {
+            // Width = right - left
+            // Height = min(height[left], height[right])
+            int width = right - left;
+            int currentHeight = Math.min(height[left], height[right]);
+            int currentArea = width * currentHeight;
+            
+            maxWater = Math.max(maxWater, currentArea);
+            
+            // Move the pointer with smaller height
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        
+        return maxWater;
+    }
+    
+    
+    // ============================================
+    // Problem 3: Longest Substring Without Repeating Characters
+    // ============================================
+    /**
+     * Given a string s, find the length of the longest substring without repeating characters.
+     * 
+     * Time: O(n), Space: O(min(m, n)) where m is charset size
+     */
+    public static int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> charIndex = new HashMap<>();
+        int maxLength = 0;
+        int left = 0;
+        
+        for (int right = 0; right < s.length(); right++) {
+            char currentChar = s.charAt(right);
+            
+            // If character is already in window, move left pointer
+            if (charIndex.containsKey(currentChar)) {
+                left = Math.max(left, charIndex.get(currentChar) + 1);
+            }
+            
+            // Update character's latest index
+            charIndex.put(currentChar, right);
+            
+            // Update max length
+            maxLength = Math.max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+    
+    
+    // ============================================
+    // Problem 4: Longest Palindromic Substring
+    // ============================================
+    /**
+     * Given string s, return the longest palindromic substring.
+     * Using expand around center approach.
+     * 
+     * Time: O(n²), Space: O(1)
+     */
+    public static String longestPalindrome(String s) {
+        if (s == null || s.length() < 1) {
+            return "";
+        }
+        
+        int start = 0;
+        int maxLen = 0;
+        
+        for (int i = 0; i < s.length(); i++) {
+            // Odd length palindromes (single character center)
+            int len1 = expandAroundCenter(s, i, i);
+            
+            // Even length palindromes (between two characters)
+            int len2 = expandAroundCenter(s, i, i + 1);
+            
+            int len = Math.max(len1, len2);
+            
+            if (len > maxLen) {
+                maxLen = len;
+                start = i - (len - 1) / 2;
+            }
+        }
+        
+        return s.substring(start, start + maxLen);
+    }
+    
+    private static int expandAroundCenter(String s, int left, int right) {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+        }
+        return right - left - 1; // Length of palindrome
+    }
+    
+    
+    // ============================================
+    // Problem 5: Add Two Numbers
+    // ============================================
+    /**
+     * Two non-empty linked lists representing two non-negative integers.
+     * Digits stored in reverse order.
+     * Return sum as linked list.
+     * 
+     * Time: O(max(m,n)), Space: O(max(m,n))
+     */
+    
+    static class ListNode {
+        int val;
+        ListNode next;
+        ListNode(int val) { this.val = val; }
+        ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+    }
+    
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        int carry = 0;
+        
+        while (l1 != null || l2 != null || carry != 0) {
+            int sum = carry;
+            
+            if (l1 != null) {
+                sum += l1.val;
+                l1 = l1.next;
+            }
+            
+            if (l2 != null) {
+                sum += l2.val;
+                l2 = l2.next;
+            }
+            
+            carry = sum / 10;
+            current.next = new ListNode(sum % 10);
+            current = current.next;
+        }
+        
+        return dummy.next;
+    }
+    
+    
+    // ============================================
+    // Main - Test Cases
+    // ============================================
+    public static void main(String[] args) {
+        System.out.println("=== LeetCode Medium Problems ===\n");
+        
+        // Test 1: Two Sum II
+        System.out.println("1. Two Sum II (Sorted Array)");
+        int[] numbers = {2, 7, 11, 15};
+        int[] result1 = twoSum(numbers, 9);
+        System.out.println("Input: " + Arrays.toString(numbers) + ", Target: 9");
+        System.out.println("Output: " + Arrays.toString(result1) + "\n");
+        
+        // Test 2: Container With Most Water
+        System.out.println("2. Container With Most Water");
+        int[] height = {1, 8, 6, 2, 5, 4, 8, 3, 7};
+        int maxAreaResult = maxArea(height);
+        System.out.println("Input: " + Arrays.toString(height));
+        System.out.println("Output: " + maxAreaResult + "\n");
+        
+        // Test 3: Longest Substring Without Repeating Characters
+        System.out.println("3. Longest Substring Without Repeating Characters");
+        String str1 = "abcabcbb";
+        String str2 = "bbbbb";
+        String str3 = "pwwkew";
+        System.out.println("Input: \"" + str1 + "\" -> " + lengthOfLongestSubstring(str1));
+        System.out.println("Input: \"" + str2 + "\" -> " + lengthOfLongestSubstring(str2));
+        System.out.println("Input: \"" + str3 + "\" -> " + lengthOfLongestSubstring(str3) + "\n");
+        
+        // Test 4: Longest Palindromic Substring
+        System.out.println("4. Longest Palindromic Substring");
+        String pal1 = "babad";
+        String pal2 = "cbbd";
+        System.out.println("Input: \"" + pal1 + "\" -> \"" + longestPalindrome(pal1) + "\"");
+        System.out.println("Input: \"" + pal2 + "\" -> \"" + longestPalindrome(pal2) + "\"\n");
+        
+        // Test 5: Add Two Numbers
+        System.out.println("5. Add Two Numbers (Linked List)");
+        // List 1: 2 -> 4 -> 3 (represents 342)
+        // List 2: 5 -> 6 -> 4 (represents 465)
+        // Sum: 7 -> 0 -> 8 (represents 807)
+        ListNode l1 = new ListNode(2, new ListNode(4, new ListNode(3)));
+        ListNode l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
+        ListNode resultList = addTwoNumbers(l1, l2);
+        System.out.println("List 1: 2 -> 4 -> 3 (342)");
+        System.out.println("List 2: 5 -> 6 -> 4 (465)");
+        System.out.print("Sum: ");
+        printList(resultList);
+        System.out.println("(807)\n");
+    }
+    
+    private static void printList(ListNode head) {
+        while (head != null) {
+            System.out.print(head.val);
+            if (head.next != null) System.out.print(" -> ");
+            head = head.next;
+        }
+        System.out.println();
+    }
+}
